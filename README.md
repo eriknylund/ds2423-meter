@@ -1,6 +1,6 @@
 # Kamstrup impulse counter using 4kbit 1-Wire RAM with Counter DS2423 on Raspbian using OWFS
 
-## Setup
+## Software setup
 
 RASPBIAN JESSIE LITE Minimal image based on Debian Jessie
 - https://www.raspberrypi.org/downloads/raspbian/
@@ -14,10 +14,20 @@ sudo raspi-config
 - Enable SSH
 - Enable 1-wire support
 
+## Hardware setup
+
 Connect DS2423 and try out the 1-wire protocol
 - 3V3 (Pin 1) - 4.7 kOhm - DQ
 - GIPO4 (Pin 7) - DQ
 - GND (Pin 9) - GND
+
+The DS2423 counts on transition from high to low. To avoid flickering signal Kamstrup energy meter S0 is connected like this
+- SO+ - A
+- SO- GND
+- A - 22 kOhm - +5V
+
+This will consume power when the S0 circuit is open, approximately 3V / (1 Mohm + 22 kOhm) = 2.94 uA
+CR2032 nominal capacity 225 mAh * 70% factor => (225 mAh * 0.7) / (0.00294 mA) ~= 53752 h ~= 6.1 y
 
 ```
 sudo modprobe w1-gpio pullup=1
