@@ -50,13 +50,13 @@ def loop():
 		b = 0
 		for line in lines:
 			before, crc, count = line.partition('crc=YES c=')
-			count.rstrip()
+			count = float(count.rstrip())
 			if (index == 2):
-				a = count
-				print("{}: {}".format('A', count))
+				a = count / config['counter-a']['impulses-per-kwh']
+				print("{}: {}".format('A', a))
 			if (index == 3):
-				b = count
-				print("{}: {}".format('B', count))
+				b = count / config['counter-b']['impulses-per-kwh']
+				print("{}: {}".format('B', b))
 			index += 1
 		thingspeak(a, b)
 		time.sleep(config['delay-seconds'])
