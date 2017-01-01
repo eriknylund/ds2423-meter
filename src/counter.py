@@ -26,7 +26,7 @@ def main(argv):
 		try:
 			global config
 			config = yaml.load(stream)
-			print(config)
+			print "Config loaded from {}.".format(configfile)
 		except yaml.YAMLError as exc:
 			print(exc)
 
@@ -59,7 +59,7 @@ def loop():
 				print("{}: {}".format('B', count))
 			index += 1
 		thingspeak(a, b)
-	time.sleep(config['delay-seconds']*1000)
+		time.sleep(config['delay-seconds'])
 
 def thingspeak(a, b):
 	key = config['thingspeak-api-key']

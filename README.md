@@ -7,6 +7,7 @@ RASPBIAN JESSIE LITE Minimal image based on Debian Jessie
 
 ```
 sudo apt-get update && sudo apt-get upgrade
+sudo apt-get install python-pip
 sudo raspi-config 
 ```
 
@@ -45,3 +46,13 @@ $ cat /sys/bus/w1/devices/1d-0000000f9d60/w1_slave
 ```
 
 The third row represents the A counter and the fourth row the B counter. In this example A=115 and B=88.
+
+## Quick start
+
+- Edit config.yml and add ThingSpeak Write API key
+
+```
+cd ds2424-meter/src
+sudo pip install -r requirements.txt
+sudo python counter.py
+```
