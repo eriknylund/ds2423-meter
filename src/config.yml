@@ -1,0 +1,3 @@
+delay-seconds: 60
+device-id: 1d-0000000f9d60
+thingspeak-api-key: <api key>

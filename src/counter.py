@@ -4,47 +4,53 @@ import os
 import time
 import sys, getopt
 import httplib, urllib
-import ctypes
-import re
+import yaml
+
+config = ''
 
 def main(argv):
-	key = ''
+	configfile = 'config.yml'
 	try:
-		opts, args = getopt.getopt(argv,"hk:",["key="])
+		opts, args = getopt.getopt(argv,"hc:",["config="])
 	except getopt.GetoptError:
-		print 'counter.py -k <thingspeak api key>'
+		print 'counter.py -c <config.yml file>'
 		sys.exit(2)
 	for opt, arg in opts:
 		if opt == '-h':
-			print 'counter.py -k <thingspeak api key>'
+			print 'counter.py -c <config.yml file>'
 			sys.exit()
-		elif opt in ("-k", "--key"):
-			key = arg
-	if len(argv) < 1:
-		print 'counter.py -k <thingspeak api key>'
-		sys.exit()
+		elif opt in ("-c", "--config"):
+			configfile = arg
+
+	with open(configfile, 'r') as stream:
+		try:
+			global config
+			config = yaml.load(stream)
+			print(config)
+		except yaml.YAMLError as exc:
+			print(exc)
 
 	os.system('modprobe w1-gpio pullup=1')
 	os.system('modprobe w1_ds2423')
-	sensor = '/sys/bus/w1/devices/1d-0000000f9d60/w1_slave'
-	loop(key, sensor)
+	print("1-wire configured.")
+	loop()
 
-def raw_data(sensor):
+def read_ds2423():
+	sensor = "/sys/bus/w1/devices/{}/w1_slave".format(config['device-id'])
 	f = open(sensor, 'r')
 	lines = f.readlines()
 	f.close()
 	return lines
 
-def loop(key, sensor):
+def loop():
 	while True:
-		time.sleep(60)
-		lines = raw_data(sensor)
+		lines = read_ds2423()
 		index = 0
 		a = 0
 		b = 0
 		for line in lines:
 			before, crc, count = line.partition('crc=YES c=')
-			re.sub('[^a-zA-Z0-9-_*.]', '', count)
+			count.rstrip()
 			if (index == 2):
 				a = count
 				print("{}: {}".format('A', count))
@@ -52,9 +58,11 @@ def loop(key, sensor):
 				b = count
 				print("{}: {}".format('B', count))
 			index += 1
-		thingspeak(key, a, b)
+		thingspeak(a, b)
+	time.sleep(config['delay-seconds']*1000)
 
-def thingspeak(key, a, b):
+def thingspeak(a, b):
+	key = config['thingspeak-api-key']
 	params = urllib.urlencode({'field1': a, 'field2': b, 'key': key})
 	headers = {"Content-type": "application/x-www-form-urlencoded","Accept":"text/plain"}
 	try:
