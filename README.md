@@ -1,4 +1,4 @@
-# Kamstrup impulse counter using 4kbit 1-Wire RAM with Counter DS2423 on Raspbian using OWFS
+# Kamstrup impulse counter using 4kbit 1-Wire RAM with Counter DS2423 on Raspbian using 1-wire module
 
 ## Software setup
 
@@ -52,7 +52,7 @@ The third row represents the A counter and the fourth row the B counter. In this
 - Edit config.yml and add ThingSpeak Write API key
 
 ```
-cd ds2424-meter/src
+cd ds2423-meter/src
 sudo pip install -r requirements.txt
 sudo python counter.py
 ```
