@@ -50,7 +50,11 @@ def loop():
 		b = 0
 		for line in lines:
 			before, crc, count = line.partition('crc=YES c=')
-			count = float(count.rstrip())
+			try:
+				count = float(count.rstrip())
+			except:
+				print "Error {} on line {}.".format(e, line)
+				continue
 			if (index == 2):
 				a = count / config['counter-a']['impulses-per-kwh']
 				print("{}: {}".format('A', a))
